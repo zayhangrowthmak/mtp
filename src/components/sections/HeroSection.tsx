@@ -2,8 +2,39 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import dynamic from 'next/dynamic'
 import { motion } from 'framer-motion'
 import { ArrowRight, ChevronDown } from 'lucide-react'
+
+// lottie-react touches the DOM, so load it client-side only.
+const Lottie = dynamic(() => import('lottie-react'), { ssr: false })
+
+// Hero graphic — Cybersecurity Lottie animation (loaded from /public).
+function HeroVisual() {
+  const [data, setData] = useState<object | null>(null)
+
+  useEffect(() => {
+    let active = true
+    fetch('/cybersecurity.json')
+      .then((r) => r.json())
+      .then((d) => active && setData(d))
+      .catch(() => {})
+    return () => {
+      active = false
+    }
+  }, [])
+
+  return (
+    <div className="relative w-[460px] h-[460px] xl:w-[540px] xl:h-[540px]">
+      {/* Ambient glow */}
+      <div
+        className="absolute inset-0 rounded-full blur-3xl opacity-50"
+        style={{ background: 'radial-gradient(circle, rgba(0,180,200,0.18), transparent 62%)' }}
+      />
+      {data && <Lottie animationData={data} loop className="relative w-full h-full" />}
+    </div>
+  )
+}
 
 // Great Place To Work badge. Shows the official asset if dropped at
 // /public/great-place-to-work.png, otherwise a clean recreation of the
@@ -131,6 +162,11 @@ export default function HeroSection() {
         <GptwBadge />
       </div>
 
+      {/* Animated solution constellation */}
+      <div className="absolute top-1/2 right-[9%] xl:right-[13%] -translate-y-1/2 z-[5] hidden xl:block pointer-events-none">
+        <HeroVisual />
+      </div>
+
       {/* Content */}
       <div className="relative z-10 flex-1 flex flex-col">
         <div className="flex-1 flex items-center max-w-7xl mx-auto w-full px-6 pt-32 pb-16">
@@ -229,6 +265,16 @@ export default function HeroSection() {
         }
         .animate-marquee {
           animation: marquee 28s linear infinite;
+        }
+        .hero-flow {
+          stroke-dasharray: 4 8;
+          animation: hero-flow 1.4s linear infinite;
+        }
+        @keyframes hero-flow {
+          to { stroke-dashoffset: -12; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .hero-flow { animation: none; }
         }
       `}</style>
     </section>
