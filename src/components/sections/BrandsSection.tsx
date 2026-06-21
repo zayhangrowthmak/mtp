@@ -1,18 +1,18 @@
 'use client'
 
 import { useRef, useState, useEffect } from 'react'
+import Link from 'next/link'
 import { motion, useInView } from 'framer-motion'
-import { BRANDS } from '@/lib/data'
-
-type Brand = (typeof BRANDS)[number]
+import { BRANDS_24, type Brand } from '@/lib/brands'
 
 function BrandCard({ brand, inView, index }: { brand: Brand; inView: boolean; index: number }) {
-  // Default to the name fallback; only swap to a logo that actually loads, so a
-  // missing /public/brands file never shows a broken-image icon.
+  // Only swap to a logo that actually loads, so a missing file never shows a
+  // broken-image icon. Every card links to the brand's dedicated page.
   const [logoOk, setLogoOk] = useState(false)
   const src = brand.logo
 
   useEffect(() => {
+    if (!src) return
     let active = true
     const probe = new window.Image()
     probe.onload = () => active && setLogoOk(true)
@@ -27,24 +27,27 @@ function BrandCard({ brand, inView, index }: { brand: Brand; inView: boolean; in
     <motion.div
       initial={{ opacity: 0, y: 16 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.4, delay: 0.05 * index }}
-      title={`${brand.name} — ${brand.category}`}
-      className="group flex items-center justify-center bg-white border border-[#E2ECF8] rounded-lg p-5 h-24 hover:border-[#00B4C8]/50 hover:shadow-[0_4px_20px_-6px_rgba(13,27,62,0.12)] transition-all duration-200 cursor-default"
+      transition={{ duration: 0.4, delay: 0.04 * index }}
     >
-      {logoOk ? (
-        /* eslint-disable-next-line @next/next/no-img-element */
-        <img
-          src={src}
-          alt={`${brand.name} logo`}
-          loading="lazy"
-          className="max-h-12 max-w-[82%] w-auto object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-300"
-        />
-      ) : (
-        <div className="text-center">
-          <p className="text-[#0D1B3E] font-semibold text-sm leading-tight">{brand.name}</p>
-          <p className="text-[#94A3B8] text-xs leading-snug mt-0.5">{brand.category}</p>
-        </div>
-      )}
+      <Link
+        href={`/brands/${brand.slug}`}
+        title={brand.name}
+        className="group flex items-center justify-center bg-white border border-[#E2ECF8] rounded-lg p-5 h-24 hover:border-[#00B4C8]/50 hover:shadow-[0_4px_20px_-6px_rgba(13,27,62,0.12)] transition-all duration-200"
+      >
+        {logoOk && src ? (
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img
+            src={src}
+            alt={`${brand.name} logo`}
+            loading="lazy"
+            className="max-h-12 max-w-[82%] w-auto object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-300"
+          />
+        ) : (
+          <span className="text-[#0D1B3E] font-semibold text-sm text-center group-hover:text-[#00B4C8] transition-colors">
+            {brand.name}
+          </span>
+        )}
+      </Link>
     </motion.div>
   )
 }
@@ -80,21 +83,26 @@ export default function BrandsSection() {
           </motion.h2>
         </div>
 
-        {/* Brand grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-          {BRANDS.map((brand, i) => (
-            <BrandCard key={brand.name} brand={brand} inView={inView} index={i} />
+        {/* Brand grid — links to dedicated brand pages */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+          {BRANDS_24.map((brand, i) => (
+            <BrandCard key={brand.slug} brand={brand} inView={inView} index={i} />
           ))}
         </div>
 
-        <motion.p
+        <motion.div
           initial={{ opacity: 0 }}
           animate={inView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.5, delay: 0.6 }}
-          className="text-center text-[#94A3B8] text-sm mt-8"
+          transition={{ duration: 0.5, delay: 0.5 }}
+          className="text-center mt-10"
         >
-          Authorised distribution across UAE &amp; Oman · Pre-sales support included
-        </motion.p>
+          <Link
+            href="/brands"
+            className="inline-flex items-center gap-2 text-[#00B4C8] font-semibold text-sm hover:gap-3 transition-all"
+          >
+            Explore all brands →
+          </Link>
+        </motion.div>
       </div>
     </section>
   )
