@@ -154,13 +154,13 @@ export default function HeroSection() {
       </div>
 
       {/* Product montage visual */}
-      <div className="absolute top-1/2 right-[2%] -translate-y-1/2 z-[5] hidden xl:block pointer-events-none">
+      <div className="absolute top-1/2 right-[6%] -translate-y-1/2 z-[5] hidden xl:block pointer-events-none">
         <HeroVisual />
       </div>
 
       {/* Content */}
       <div className="relative z-10 flex-1 flex flex-col">
-        <div className="flex-1 flex items-center max-w-7xl mx-auto w-full px-6 pt-32 pb-16">
+        <div className="flex-1 flex items-center max-w-7xl mx-auto w-full px-6 pt-32 pb-16 xl:-translate-x-[3vw]">
           <div className="max-w-3xl">
             {/* Eyebrow */}
             <motion.div
