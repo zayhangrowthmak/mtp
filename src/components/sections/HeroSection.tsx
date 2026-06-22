@@ -2,36 +2,27 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import dynamic from 'next/dynamic'
 import { motion } from 'framer-motion'
 import { ArrowRight, ChevronDown } from 'lucide-react'
 
-// lottie-react touches the DOM, so load it client-side only.
-const Lottie = dynamic(() => import('lottie-react'), { ssr: false })
-
-// Hero graphic — Cybersecurity Lottie animation (loaded from /public).
+// Hero graphic — real product montage (CCTV, access, fire panel, distribution
+// board, power & control) on transparent, floating on the navy.
 function HeroVisual() {
-  const [data, setData] = useState<object | null>(null)
-
-  useEffect(() => {
-    let active = true
-    fetch('/cybersecurity.json')
-      .then((r) => r.json())
-      .then((d) => active && setData(d))
-      .catch(() => {})
-    return () => {
-      active = false
-    }
-  }, [])
-
   return (
-    <div className="relative w-[460px] h-[460px] xl:w-[540px] xl:h-[540px]">
+    // Fluid width — scales smoothly with the viewport (big on laptops, bigger on
+    // wide monitors) while always clearing the headline on the left.
+    <div className="relative" style={{ width: 'clamp(520px, 45vw, 1000px)' }}>
       {/* Ambient glow */}
       <div
-        className="absolute inset-0 rounded-full blur-3xl opacity-50"
-        style={{ background: 'radial-gradient(circle, rgba(0,180,200,0.18), transparent 62%)' }}
+        className="absolute inset-0 rounded-full blur-3xl opacity-60"
+        style={{ background: 'radial-gradient(circle, rgba(0,180,200,0.20), transparent 64%)' }}
       />
-      {data && <Lottie animationData={data} loop className="relative w-full h-full" />}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/hero-products.png"
+        alt="MTP security & infrastructure range — IP CCTV camera, access reader, fire pull station, distribution board with breakers, power monitor and control app"
+        className="relative w-full h-auto drop-shadow-[0_30px_60px_rgba(0,0,0,0.5)]"
+      />
     </div>
   )
 }
@@ -162,8 +153,8 @@ export default function HeroSection() {
         <GptwBadge />
       </div>
 
-      {/* Animated solution constellation */}
-      <div className="absolute top-1/2 right-[9%] xl:right-[13%] -translate-y-1/2 z-[5] hidden xl:block pointer-events-none">
+      {/* Product montage visual */}
+      <div className="absolute top-1/2 right-[2%] -translate-y-1/2 z-[5] hidden xl:block pointer-events-none">
         <HeroVisual />
       </div>
 
